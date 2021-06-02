@@ -1,0 +1,69 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Web;
+using PassBook;
+
+/// <summary>
+/// Summary description for clsLogin
+/// </summary>
+public class clsLogin
+{
+	public clsLogin()
+	{
+		//
+		// TODO: Add constructor logic here
+		//
+	}
+    
+    public static string funLogin(ClassJson.LOGIN objLogin)
+    {
+        PassBook.ServiceClient objPassBook = new PassBook.ServiceClient();
+        ResponseCodes objResponse = new ResponseCodes();
+        string sAttemptCount = "";
+        string sReturn="";
+        try
+        {
+            if (objLogin.MPIN == "" || objLogin.MPIN == null || objLogin.DEVICEID == "" || objLogin.DEVICEID == null || objLogin.DEVICETYPE == "" || objLogin.DEVICETYPE == null)
+            {
+                objLogin = new ClassJson.LOGIN();
+                objLogin.RESPONSECODE = "999";
+            }
+            else
+            {
+                //login wcf call
+                
+                objResponse= objPassBook.LoginUser(objLogin.DEVICEID, objLogin.DEVICETYPE, objLogin.MPIN);
+                objLogin = new ClassJson.LOGIN();
+                objLogin.RESPONSECODE = objResponse.strResponse;
+                objLogin.ATTEMPTCOUNT= objResponse.AttemptCount;
+                if (objResponse.AttemptCount == "")
+                {
+                    objLogin.ATTEMPTCOUNT = null;
+                }
+                else
+                {
+                    objLogin.ATTEMPTCOUNT = objResponse.AttemptCount;
+                }
+                if (objResponse.SessionId == "")
+                {
+                    objLogin.SESSIONID = null;
+                }
+                else
+                {
+                    objLogin.SESSIONID = objResponse.SessionId;
+                }
+
+            }
+        }
+        catch (Exception ee)
+        {
+            clsEvent.LogExceptionEvent(ee.Message);
+            objLogin = new ClassJson.LOGIN();
+            objLogin.RESPONSECODE = "101";
+        }
+        sReturn = ClassJson.JsonSerializer<ClassJson.LOGIN>(objLogin);
+        return sReturn;
+    }
+
+}

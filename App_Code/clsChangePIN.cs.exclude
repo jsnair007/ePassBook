@@ -1,0 +1,50 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Web;
+using PassBook;
+
+/// <summary>
+/// Summary description for clsChangePIN
+/// </summary>
+public class clsChangePIN
+{
+    
+	public clsChangePIN()
+	{
+		//
+		// TODO: Add constructor logic here
+		//
+	}
+    public static string funChangePIN(ClassJson.CHANGEPIN objPIN)
+    {
+        PassBook.ServiceClient objPassBook = new PassBook.ServiceClient();
+        string sReturn = "";
+        try
+        {
+            if (objPIN.OLDMPIN == "" || objPIN.OLDMPIN == null || objPIN.NEWMPIN == "" || objPIN.NEWMPIN == null || objPIN.DEVICEID == "" || objPIN.DEVICEID == null || objPIN.DEVICETYPE == "" || objPIN.DEVICETYPE == null)
+            {
+                objPIN = new ClassJson.CHANGEPIN();
+                objPIN.RESPONSECODE = "999";
+            }
+            else
+            {
+                sReturn = objPassBook.ChangeMPIN( objPIN.OLDMPIN, objPIN.NEWMPIN, objPIN.DEVICEID, objPIN.DEVICETYPE);
+
+                objPIN = new ClassJson.CHANGEPIN();
+                objPIN.RESPONSECODE = sReturn;
+
+            }
+            
+        }
+        catch (Exception eee)
+        {
+            clsEvent.LogExceptionEvent(eee.Message);
+            objPIN = new ClassJson.CHANGEPIN();
+            objPIN.RESPONSECODE = "101";
+            //sReturn = ClassJson.JsonSerializer<ClassJson.CHANGEPIN>(objPIN);
+        }
+        sReturn = ClassJson.JsonSerializer<ClassJson.CHANGEPIN>(objPIN);
+        return sReturn;
+    }
+}

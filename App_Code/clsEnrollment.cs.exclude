@@ -1,0 +1,68 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Web;
+using System.Web.UI;
+using System.Web.UI.WebControls;
+using System.Net;
+using System.Collections.Specialized;
+using System.Web.Script.Serialization;
+using System.Runtime.Serialization.Json;
+
+/// <summary>
+/// Summary description for clsChangePIN
+/// </summary>
+public class clsEnrollment
+{
+    // ClassJson.ENROLLMENT objUser = new ClassJson.ENROLLMENT();
+	public clsEnrollment()
+	{
+        //
+        // TODO: Add constructor logic here
+        //
+	}
+    
+    public static string funEnrollment(ClassJson.ENROLLMENT objEnroll)
+    {
+        
+        string sReturn="";
+        try
+        {
+            if (objEnroll.MOBILENO == "" || objEnroll.MOBILENO == null || objEnroll.COUNTRYCODE == "" || objEnroll.COUNTRYCODE == null || objEnroll.DEVICEID == "" || objEnroll.DEVICEID == null || objEnroll.DEVICETYPE == "" || objEnroll.DEVICETYPE == null)
+            {
+                objEnroll = new ClassJson.ENROLLMENT();
+                objEnroll.RESPONSECODE = "999";
+            }
+            else
+            {
+                PassBook.ServiceClient objPassBook = new PassBook.ServiceClient();
+
+                //sResponse = objUser.RESPONSECODE;
+
+                //check mobile number is numeric and other validations here
+
+                //CHECK THE MOBILE NUMBER IS IN SMS_REG_TBL
+                //IF FOUND THEN 
+                //CHECK THE MOBILE AND DEVICE ID IS REGISTERED IN TBLENROLL 
+                //RESPONSE CODE MAY DIFFER HERE
+
+                objEnroll = objPassBook.EnrollUser(objEnroll.OPCODE, objEnroll.COUNTRYCODE, objEnroll.MOBILENO, objEnroll.DEVICEID, objEnroll.DEVICETYPE);
+
+                objEnroll = new ClassJson.ENROLLMENT(); //clear off all data and ready for respond
+                objEnroll.RESPONSECODE = sReturn;
+
+                ////clsEvent.LogEvent("Mobile: " + sMobile + ", Device Token: " + sDeviceToken + ",Device Type: " + sDeviceType + ", Status: "+sResponse+" ");
+
+            }
+        }
+        catch (Exception ee)
+        {
+            clsEvent.LogExceptionEvent(ee.Message);
+            objEnroll = new ClassJson.ENROLLMENT();
+            objEnroll.RESPONSECODE = "101";
+        }
+        sReturn = ClassJson.JsonSerializer<ClassJson.ENROLLMENT>(objEnroll);
+        return sReturn;
+    }
+
+}

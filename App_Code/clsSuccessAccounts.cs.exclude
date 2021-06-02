@@ -1,0 +1,32 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Web;
+using PassBook;
+
+/// <summary>
+/// Summary description for clsSuccessAccounts
+/// </summary>
+public class clsSuccessAccounts
+{
+	public clsSuccessAccounts()
+	{
+		//
+		// TODO: Add constructor logic here
+		//
+	}
+
+    public static string funSuccessAccounts(string reqStr)
+    {
+        string sReturn = "";
+        PassBook.ServiceClient objPassBook = new PassBook.ServiceClient();
+        try
+        {
+            sReturn = objPassBook.getAccDetails(reqStr);
+        }
+        catch (Exception ee)
+        {
+        }
+        return sReturn;
+    }
+}
